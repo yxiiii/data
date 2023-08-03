@@ -1,0 +1,52 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Load data from the Excel file
+file_path = '新宏观图.xlsx'
+sheet_names = ['恒生指数PE_TTM', '港币兑美元汇率', '港币收市总结余']
+
+data_frames = {}
+for sheet_name in sheet_names:
+    data_frames[sheet_name] = pd.read_excel(file_path, sheet_name=sheet_name)
+
+df = data_frames.copy()
+# # Filter data for dates after year 2015
+# for sheet_name in sheet_names:
+#     df[sheet_name] = df[sheet_name][df[sheet_name]['Date'].dt.year > 2014]
+
+# Plot the first graph with PE_HSI(MA10), EFFR(MA10), TNX(MA10), FVX(MA10)
+
+color_theme = ['#A5644E', '#FCECD5', '#A19574', 'grey', '#A27242', '#F8E19F','#523227', 'magenta']
+
+fig, ax1 = plt.subplots(figsize=(12, 6))
+ax2 = ax1.twinx()
+ax3 = ax1.twinx()
+
+plt.rcParams['font.sans-serif'] = 'Arial Unicode MS'
+
+ax1.plot(df['恒生指数PE_TTM']['日期'], df['恒生指数PE_TTM']['恒生指数PE_TTM'], label='恒生指数PE_TTM', color=color_theme[0])
+ax2.plot(data_frames['港币兑美元汇率']['日期'], data_frames['港币兑美元汇率']['港币兑美元汇率'], label='港币兑美元汇率', color=color_theme[1])
+
+# Plot 港币收市总结余 on the third y-axis
+ax3.plot(data_frames['港币收市总结余']['日期'], data_frames['港币收市总结余']['港币收市总结余'], label='港币收市总结余', color=color_theme[2])
+
+
+ax1.set_xlabel('日期')
+ax1.set_ylabel('恒生指数PE_TTM')
+# ax2.set_ylabel('Index', color='green')
+# ax2.grid(True)
+# ax2.set_ylim(0, 8) 
+
+ax3.spines['right'].set_position(('outward', 60))
+
+lines1, labels1 = ax1.get_legend_handles_labels()
+lines2, labels2 = ax2.get_legend_handles_labels()
+lines3, labels3 = ax3.get_legend_handles_labels()
+ax3.legend(lines1 + lines2+lines3, labels1 + labels2+labels3, loc='upper left')
+
+
+plt.tight_layout()
+plt.savefig('first_graph.png')
+
+
+plt.show()
